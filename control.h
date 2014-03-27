@@ -1,9 +1,10 @@
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
-#define IR_PORT PORTD
-#define IR_DDC DDRD
-#define IR_SENSORS PIND
+#define IR_PORT PORTA
+#define IR_DDC DDRA
+#define IR_SENSORS PINA
 
 #define BUTTON_PORT PORTE
 #define BUTTON_DDR DDRE
@@ -22,3 +23,6 @@ void setServo(uint8_t v);
 uint8_t readSensors(void);
 
 
+void setMotorPWM(uint8_t);
+
+ISR(TIMER3_COMPA);

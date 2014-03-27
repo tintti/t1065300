@@ -20,6 +20,26 @@ void setupControls(void){
    OCR1A = 3000; // Set steering to center.
    DDRB |= (1<<PB5); // Enable Servo output.
 
+   // Motor PWM (Timer 4)
+   TCCR4A |= (1<<WGM41) | (1<< COM4A1);
+   TCCR4B |= (1<<WGM43) | (1<< CS40);
+   ICR4 = 800;
+   DDRH |= (1<<PH3);
+
+   // Motor half-bridge control
+   DDRK = 0x0F;
+   PORTK |= 0x0C;
+
+   // Tachometer (Timer/Counter 5)
+   DDRL = 0x00;
+   PORTL = 0x00;
+   TCCR5B |= (1<<CS52) | (1<<CS51) | (1<<CS50); // Set external clock input.
+
+   // Interrupt (Timer 3)
+   TCCR3B |= (1<<CS31) | (1<<CS30) | (1<<WGM32); // 1/64 prescaler.
+   TIMSK3 |= (1<<OCIE3A);
+   OCR3A = 10000;
+
 }
 
 void setServo(uint8_t v){
@@ -38,3 +58,19 @@ uint8_t buttonPressed(void){
    return (pressed & (1<<PE5));
 }
 
+void setMotorPWM(uint8_t speed){
+   OCR4A = speed;
+}
+
+uint16_t readTacho(){
+   uint16_t t = OCR5A;
+   OCR5A = 0;
+   return t;
+}
+
+ISR(TIMER3_COMPA_vect){
+   uint16_t speed = 100;
+   static uint8_t pwm;
+   pwm += 1*(readTacho() - speed);
+   setMotorPWM(pwm);
+}
