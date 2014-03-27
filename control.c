@@ -40,9 +40,7 @@ void setupControls(void){
    TIMSK3 |= (1<<OCIE3A);
    OCR3A = 10000;
 
-   #define FOSC 16000000
-   #define BAUD 9600
-   #define MYUBRR (FOSC/16/BAUD-1)
+   // USART config
    uint16_t ubrr = 103;
    UBRR1H = ubrr>>8;
    UBRR1L = ubrr;
@@ -72,13 +70,13 @@ void setMotorPWM(uint8_t speed){
 }
 
 uint16_t readTacho(){
-   uint16_t t = OCR5A;
-   OCR5A = 0;
+   uint16_t t = TCNT5;
+   TCNT5 = 0;
    return t;
 }
 
 ISR(TIMER3_COMPA_vect){
-   uint16_t speed = 100;
+   uint16_t speed = 10;
    static uint8_t pwm;
    uint16_t tacho = readTacho();
    printInteger(tacho);
