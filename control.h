@@ -1,3 +1,6 @@
+#ifndef _CONTROL_H_
+#define _CONTROL_H_
+
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -26,3 +29,5 @@ uint8_t readSensors(void);
 void setMotorPWM(uint8_t);
 
 ISR(TIMER3_COMPA);
+
+#endif
