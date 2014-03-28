@@ -4,14 +4,16 @@
 #include <avr/io.h>
 #include <stdlib.h>
 
-void USART_Transmit(uint8_t c);
+void sendCommand(uint8_t c);
 
-uint8_t USART_Receive(void);
+uint8_t receiveResponse(void);
 
 void printString(char* buf,uint8_t row);
 
 void printInteger(uint16_t d,uint8_t row);
 
 void clearScreen(void);
+
+void initDisplay(void);
 
 #endif

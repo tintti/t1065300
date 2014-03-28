@@ -8,8 +8,8 @@ int main (void) {
         setupControls();
 
         while (!buttonPressed());
-	USART_Transmit(0x55);
-        USART_Receive();
+	initDisplay();
+
         // Main code here
 	//setMotorPWM(200);
         PORTK |= 0x01;

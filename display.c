@@ -1,30 +1,41 @@
 #include "display.h"
 
-void USART_Transmit(uint8_t data){
+void initDisplay()
+{
+  sendCommand(0x55);
+  receiveResponse();
+}
+
+void sendCommand(uint8_t data){
    while (!(UCSR1A & (1<<UDRE1)));
 
    UDR1 = data;
 }
 
-uint8_t USART_Receive(void){
+void sendMultipleCommands(uint8_t data[]){
+  for (uint8_t i=0; i<(sizeof(data)/sizeof(uint8_t)); i++){
+	while (!(UCSR1A & (1<<UDRE1)));
+	UDR1 = data[i];
+  }
+}
+
+uint8_t receiveResponse(void){
    while ( !(UCSR1A & (1<<RXC1)));
    return UDR1;
 }
 
-void printString(char* buf,uint8_t row){
-   USART_Transmit(0x73);
-   USART_Transmit(0x00);
-   USART_Transmit(row);
-   USART_Transmit(0x02);
-   USART_Transmit(0xff);
-   USART_Transmit(0xff);
+void printString(char* buf,uint8_t row){ 
+
+   uint8_t data[] = {0x73, 0x00, row, 0x03, 0xff, 0xff};
+   sendMultipleCommands(data);
+
    while(*buf){
-      USART_Transmit(*buf);
+      sendCommand(*buf);
       buf++;
    }
-   USART_Transmit(0x00);
 
-   USART_Receive();
+   sendCommand(0x00);
+   receiveResponse();
 
 }
 
@@ -35,6 +46,6 @@ void printInteger(uint16_t d,uint8_t row){
 }
 
 void clearScreen(void){
-	USART_Transmit(0x45);
-	USART_Receive();
+	sendCommand(0x45);
+	receiveResponse();
 }
