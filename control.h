@@ -17,6 +17,8 @@
 #define LEDS_DDR DDRC
 #define LEDS PORTC
 
+#define PWM_MAX 300
+
 void setupControls(void);
 
 uint8_t buttonPressed(void);
@@ -26,7 +28,7 @@ void setServo(uint8_t v);
 uint8_t readSensors(void);
 
 
-void setMotorPWM(uint8_t);
+void setMotorPWM(uint16_t);
 
 ISR(TIMER3_COMPA);
 

@@ -10,12 +10,6 @@ int main (void) {
         while (!buttonPressed());
 	USART_Transmit(0x55);
         USART_Receive();
-        //USART_Transmit(0x42);
-	//USART_Transmit(0xff);
-	//USART_Transmit(0x00);
-	//USART_Receive();
-
-
         // Main code here
 	//setMotorPWM(200);
         PORTK |= 0x01;

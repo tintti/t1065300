@@ -65,7 +65,8 @@ uint8_t buttonPressed(void){
    return (pressed & (1<<PE5));
 }
 
-void setMotorPWM(uint8_t speed){
+void setMotorPWM(uint16_t speed){
+   if( speed > PWM_MAX) speed = PWM_MAX;
    OCR4A = speed;
 }
 
@@ -76,11 +77,12 @@ uint16_t readTacho(){
 }
 
 ISR(TIMER3_COMPA_vect){
-   uint16_t speed = 10;
-   static uint8_t pwm;
+   uint16_t speed = 6;
+   static uint16_t pwm;
    uint16_t tacho = readTacho();
    clearScreen();
-   pwm += 3*(speed - tacho);
+   pwm += 6*(speed - tacho);
+   if (pwm > PWM_MAX) pwm = PWM_MAX;
    setMotorPWM(pwm);
    printInteger(tacho,0);
    printInteger(pwm,1);
