@@ -6,6 +6,8 @@
 
 void sendCommand(uint8_t c);
 
+void sendMultipleCommands(uint8_t data[], size_t size);
+
 uint8_t receiveResponse(void);
 
 void printString(char* buf,uint8_t row);

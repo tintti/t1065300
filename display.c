@@ -8,12 +8,11 @@ void initDisplay()
 
 void sendCommand(uint8_t data){
    while (!(UCSR1A & (1<<UDRE1)));
-
    UDR1 = data;
 }
 
-void sendMultipleCommands(uint8_t data[]){
-  for (uint8_t i=0; i<(sizeof(data)/sizeof(uint8_t)); i++){
+void sendMultipleCommands(uint8_t data[], size_t size){
+  for (size_t i=0; i<size; i++){
 	while (!(UCSR1A & (1<<UDRE1)));
 	UDR1 = data[i];
   }
@@ -24,10 +23,10 @@ uint8_t receiveResponse(void){
    return UDR1;
 }
 
-void printString(char* buf,uint8_t row){ 
+void printString(char* buf, uint8_t row){ 
 
    uint8_t data[] = {0x73, 0x00, row, 0x03, 0xff, 0xff};
-   sendMultipleCommands(data);
+   sendMultipleCommands(data, 6);
 
    while(*buf){
       sendCommand(*buf);
