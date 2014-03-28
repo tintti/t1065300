@@ -38,7 +38,7 @@ void setupControls(void){
    // Interrupt (Timer 3)
    TCCR3B |= (1<<CS31) | (1<<CS30) | (1<<WGM32); // 1/64 prescaler.
    TIMSK3 |= (1<<OCIE3A);
-   OCR3A = 10000;
+   OCR3A = 50000;
 
    // USART config
    uint16_t ubrr = 103;
@@ -79,7 +79,9 @@ ISR(TIMER3_COMPA_vect){
    uint16_t speed = 10;
    static uint8_t pwm;
    uint16_t tacho = readTacho();
-   printInteger(tacho);
-   pwm += 1*(tacho - speed);
+   clearScreen();
+   pwm += 3*(speed - tacho);
    setMotorPWM(pwm);
+   printInteger(tacho,0);
+   printInteger(pwm,1);
 }
