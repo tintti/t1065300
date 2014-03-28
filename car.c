@@ -3,6 +3,8 @@
 
 #include "display.h"
 #include "control.h"
+
+// PID implementation from ATMEL AN221
 #include "pid.h"
 
 // Motor PID
@@ -10,15 +12,15 @@
 #define K_I 2
 #define K_D 2.00
 
-#define PID_INTERVAL 1
+#define PID_INTERVAL 14
 
-
+// Steering PID
 #define K_P2 0.2
 #define K_I2 0.05
 #define K_D2 0.00
 
 
-uint8_t pidTimer = 0;
+uint8_t pidTimer = FALSE;
 
 struct PID_DATA pidDataMotor;
 struct PID_DATA pidDataSteering;
@@ -41,7 +43,7 @@ uint8_t sensorFunction(){
    for(uint8_t i = 0; i < 8; i++){
       if(s&(1<<i)){
          last = i;
-         return i;
+         return i+1;
       }
    }
 }
@@ -57,7 +59,7 @@ int main (void) {
         // Main code here
         PORTK |= 0x01;
 	sei();
-        uint16_t speed = 5;
+        uint16_t speed = 2;
         uint16_t referenceValue, measurementValue, inputValue, steeringMeasurement, steeringInput, steeringReference
            ;
 	for(;;){
@@ -67,21 +69,22 @@ int main (void) {
                inputValue = pid_Controller(referenceValue,measurementValue, &pidDataMotor);
                setMotorPWM(inputValue);
                clearScreen();
-               printInteger(referenceValue,0);
-               printInteger(measurementValue,1);
-               printInteger(inputValue,2);
+               printInteger(referenceValue,1);
+               printInteger(measurementValue,2);
+               printInteger(inputValue,3);
 
-               steeringReference = 127;
-               steeringMeasurement = sensorFunction()*32;
-               steeringInput = pid_Controller(steeringReference, steeringMeasurement, &pidDataSteering);
-               setServo(steeringReference -steeringInput);
-               printInteger(steeringReference,4);
-               printInteger(steeringMeasurement,5);
-               printInteger(steeringReference -steeringInput,6);
+              // steeringReference = 127;
+              // steeringMeasurement = sensorFunction()*32;
+              // steeringInput = pid_Controller(steeringReference, steeringMeasurement, &pidDataSteering);
+              // setServo(steeringReference -steeringInput);
+              // printInteger(steeringReference,5);
+              // printInteger(steeringMeasurement,6);
+              // printInteger(steeringReference -steeringInput,7);
 
                pidTimer = FALSE;
             }
-            printString("Auto",9);
+            setServo(sensorFunction()*32 -16);
+            printString("Auto",0);
 	}
 
 }
