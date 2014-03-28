@@ -38,7 +38,7 @@ void setupControls(void){
    // Interrupt (Timer 3)
    TCCR3B |= (1<<CS31) | (1<<CS30) | (1<<WGM32); // 1/64 prescaler.
    TIMSK3 |= (1<<OCIE3A);
-   OCR3A = 50000;
+   OCR3A = 2500;
 
    // USART config
    uint16_t ubrr = 103;

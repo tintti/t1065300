@@ -10,12 +10,21 @@
 #define K_I 0.00
 #define K_D 0.00
 
+#define PID_INTERVAL 10
+
 uint8_t pidTimer = 0;
 
 struct PID_DATA pidData;
 
 ISR(TIMER3_COMPA_vect){
-   clearScreen();
+   static uint16_t i = 0;
+   if (i < PID_INTERVAL){
+      i++;
+   }
+   else {
+      pidTimer = TRUE;
+      i = 0;
+   }
 }
 
 
@@ -37,6 +46,7 @@ int main (void) {
                measurementValue = readTacho();
                inputValue = pid_Controller(referenceValue,measurementValue, &pidData);
                setMotorPWM(inputValue);
+               clearScreen();
                printInteger(measurementValue,0);
                printInteger(inputValue,1);
                pidTimer = FALSE;

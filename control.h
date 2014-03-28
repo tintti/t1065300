@@ -27,6 +27,7 @@ void setServo(uint8_t v);
 
 uint8_t readSensors(void);
 
+uint16_t readTacho(void);
 
 void setMotorPWM(uint16_t);
 
