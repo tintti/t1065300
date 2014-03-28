@@ -30,6 +30,5 @@ uint8_t readSensors(void);
 
 void setMotorPWM(uint16_t);
 
-ISR(TIMER3_COMPA);
 
 #endif
