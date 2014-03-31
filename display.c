@@ -2,13 +2,20 @@
 
 void initDisplay()
 {
+  //autobaud
   sendCommand(0x55);
   receiveResponse();
 
+  //set text to opaque
   sendCommand(0x4F);
   sendCommand(0x01);
   receiveResponse(); 
 
+  //enable touch screen
+  sendCommand(0x59);
+  sendCommand(0x05);
+  sendCommand(0x00);
+  receiveResponse();
 }
 
 void sendCommand(uint8_t data){
@@ -59,7 +66,10 @@ void addController(void) {
 }
 
 void touchScreen(void) {
-   uint8_t data[] = {0x6f, 0x04};
+   uint8_t data[] = {0x6f, 0x05};
    sendMultipleCommands(data, 2); 
-   receiveResponse(); 
+
+   uint8_t x_coordinate = receiveResponse();
+   printString("x coordinate for touch: ", 0); 
+   printInteger(x_coordinate, 0); 
 }
