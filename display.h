@@ -18,4 +18,7 @@ void clearScreen(void);
 
 void initDisplay(void);
 
+void setHighSpeed(void);
+
+void touchScreen(void);
 #endif

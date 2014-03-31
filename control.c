@@ -38,7 +38,7 @@ void setupControls(void){
    // Interrupt (Timer 3)
    TCCR3B |= (1<<CS31) | (1<<CS30) | (1<<WGM32); // 1/64 prescaler.
    TIMSK3 |= (1<<OCIE3A);
-   OCR3A = 2500;
+   OCR3A = 250;
 
    // USART config
    uint16_t ubrr = 103;
@@ -76,4 +76,10 @@ uint16_t readTacho(){
    return t;
 }
 
+void setLED1(void){
+   LEDS_PORT |= (1<<PC1);
+}
 
+void unSetLED1(void){
+   LEDS_PORT &= ~(1<<PC1);
+}

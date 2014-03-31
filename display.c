@@ -1,5 +1,5 @@
 #include "display.h"
-
+#include <avr/delay.h>
 void initDisplay()
 {
   //autobaud
@@ -16,6 +16,20 @@ void initDisplay()
   sendCommand(0x05);
   sendCommand(0x00);
   receiveResponse();
+}
+
+void setHighSpeed(){
+   setLED1();
+   sendCommand(0x51);
+   sendCommand(0x0a);
+   receiveResponse();
+   uint16_t ubrr = 25;
+   UBRR1H = ubrr>>8;
+   UBRR1L = ubrr;
+   UCSR1B = (1<<RXEN1) | (1<<TXEN1);
+   UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);
+   //_delay_ms(100);
+   unSetLED1();
 }
 
 void sendCommand(uint8_t data){
@@ -69,7 +83,10 @@ void touchScreen(void) {
    uint8_t data[] = {0x6f, 0x05};
    sendMultipleCommands(data, 2); 
 
+   receiveResponse();
    uint8_t x_coordinate = receiveResponse();
-   printString("x coordinate for touch: ", 0); 
+   receiveResponse();
+   receiveResponse();
+   //printString("x coordinate for touch: ", 0); 
    printInteger(x_coordinate, 0); 
 }

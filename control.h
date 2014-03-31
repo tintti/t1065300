@@ -31,5 +31,7 @@ uint16_t readTacho(void);
 
 void setMotorPWM(uint16_t);
 
+void setLED1(void);
+void unSetLED1(void);
 
 #endif
