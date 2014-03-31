@@ -4,6 +4,11 @@ void initDisplay()
 {
   sendCommand(0x55);
   receiveResponse();
+
+  sendCommand(0x4F);
+  sendCommand(0x01);
+  receiveResponse(); 
+
 }
 
 void sendCommand(uint8_t data){
@@ -23,7 +28,7 @@ uint8_t receiveResponse(void){
    return UDR1;
 }
 
-void printString(char* buf, uint8_t row){ 
+void printString(char* buf, uint8_t row) { 
 
    uint8_t data[] = {0x73, 0x00, row, 0x03, 0xff, 0xff};
    sendMultipleCommands(data, 6);
@@ -39,12 +44,22 @@ void printString(char* buf, uint8_t row){
 }
 
 void printInteger(uint16_t d,uint8_t row){
-	char buf[10];
-        itoa(d,buf,10);
-	printString(buf,row);
+   char buf[10];
+   itoa(d,buf,10);
+   printString(buf,row);
 }
 
 void clearScreen(void){
-	sendCommand(0x45);
-	receiveResponse();
+   sendCommand(0x45);
+   receiveResponse();
+}
+
+void addController(void) {
+//draw text button
+}
+
+void touchScreen(void) {
+   uint8_t data[] = {0x6f, 0x04};
+   sendMultipleCommands(data, 2); 
+   receiveResponse(); 
 }
