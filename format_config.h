@@ -39,7 +39,7 @@
 /** Check if we are in the C hosted configuration **/
 
 #if (__STDC_HOSTED__ == 1)
-  #define CONFIG_HAVE_LIBC
+#define CONFIG_HAVE_LIBC
 #endif
 
 /*****************************************************************************/
@@ -57,7 +57,7 @@
                            || defined(__x86_64)))   \
     || (defined(__FreeBSD__) && defined(__amd64__)) \
     || (defined(DARWIN) && defined(__x86_64__))
-  #define CONFIG_VA_LIST_AS_ARRAY_TYPE
+#define CONFIG_VA_LIST_AS_ARRAY_TYPE
 #endif
 
 /*****************************************************************************/
@@ -68,7 +68,7 @@
     produces a 64-bit (or larger) result.
 **/
 #if defined(__arm__) || defined(__i386__)
-  #define CONFIG_USE_INLINE_DIV10
+#define CONFIG_USE_INLINE_DIV10
 #endif
 
 /*****************************************************************************/
@@ -77,15 +77,15 @@
     The default is treated as normal data accesses.
 **/
 #if defined(__GNUC__) && defined(__AVR__)
-  #include <avr/pgmspace.h>
-  #define ROM_CHAR(p)           (pgm_read_byte((PGM_P)(p)))
-  #define ROM_PTR_T             PGM_P
-  #define ROM_DECL(x)           x PROGMEM
-  #define CONFIG_HAVE_ALT_PTR
+#include <avr/pgmspace.h>
+#define ROM_CHAR(p)           (pgm_read_byte((PGM_P)(p)))
+#define ROM_PTR_T             PGM_P
+#define ROM_DECL(x)           x PROGMEM
+#define CONFIG_HAVE_ALT_PTR
 #else /* Default */
-  #define ROM_CHAR(p)           ( *(const char *)(p) )
-  #define ROM_PTR_T             const char *
-  #define ROM_DECL(x)           x
+#define ROM_CHAR(p)           ( *(const char *)(p) )
+#define ROM_PTR_T             const char *
+#define ROM_DECL(x)           x
 #endif
 
 /*****************************************************************************/

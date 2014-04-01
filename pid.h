@@ -28,21 +28,21 @@
  *
  * Setpoints and data used by the PID control algorithm
  */
-typedef struct PID_DATA{
-  //! Last process value, used to find derivative of process value.
-  int16_t lastProcessValue;
-  //! Summation of errors, used for integrate calculations
-  int32_t sumError;
-  //! The Proportional tuning constant, multiplied with SCALING_FACTOR
-  int16_t P_Factor;
-  //! The Integral tuning constant, multiplied with SCALING_FACTOR
-  int16_t I_Factor;
-  //! The Derivative tuning constant, multiplied with SCALING_FACTOR
-  int16_t D_Factor;
-  //! Maximum allowed error, avoid overflow
-  int16_t maxError;
-  //! Maximum allowed sumerror, avoid overflow
-  int32_t maxSumError;
+typedef struct PID_DATA {
+    //! Last process value, used to find derivative of process value.
+    int16_t lastProcessValue;
+    //! Summation of errors, used for integrate calculations
+    int32_t sumError;
+    //! The Proportional tuning constant, multiplied with SCALING_FACTOR
+    int16_t P_Factor;
+    //! The Integral tuning constant, multiplied with SCALING_FACTOR
+    int16_t I_Factor;
+    //! The Derivative tuning constant, multiplied with SCALING_FACTOR
+    int16_t D_Factor;
+    //! Maximum allowed error, avoid overflow
+    int16_t maxError;
+    //! Maximum allowed sumerror, avoid overflow
+    int32_t maxSumError;
 } pidData_t;
 
 /*! \brief Maximum values

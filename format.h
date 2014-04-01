@@ -2,11 +2,11 @@
  * Format - lightweight string formatting library.
  * Copyright (C) 2010-2011, Neil Johnson
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms,
  * with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  * * Redistributions in binary form must reproduce the above copyright notice,
@@ -15,7 +15,7 @@
  * * Neither the name of nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -40,24 +40,24 @@
 
 /**
     Interpret format specification passing formatted text to consumer function.
-    
-    Executes the printf-compatible format specification @a fmt, referring to 
+
+    Executes the printf-compatible format specification @a fmt, referring to
     optional arguments @a ap.  Any output text is passed to caller-provided
     consumer function @a cons, which also takes caller-provided opaque pointer
     @a arg.
-    
+
     @param cons         Pointer to caller-provided consumer function.
     @param arg          Opaque pointer passed through to @a cons.
     @param fmt          printf-compatible format specifier.
     @param ap           List of optional format string arguments
-    
+
     @returns            Number of characters sent to @a cons, or EXBADFORMAT.
 **/
 extern int format( void * (* /* cons */) (void *, const char *, size_t),
-             void *          /* arg  */,
-             const char *    /* fmt  */,
-             va_list         /* ap   */
-);
+                   void *          /* arg  */,
+                   const char *    /* fmt  */,
+                   va_list         /* ap   */
+                 );
 
 /*    The Consumer Function
  *

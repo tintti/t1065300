@@ -42,8 +42,8 @@
 #include "format_config.h"
 
 #if defined(CONFIG_HAVE_LIBC)
-  #include <string.h>
-  #include <ctype.h>
+#include <string.h>
+#include <ctype.h>
 #endif
 
 /*****************************************************************************/
@@ -108,13 +108,13 @@
 
 /** Set up platform-dependent access to variable arguments **/
 #if defined(CONFIG_VA_LIST_AS_ARRAY_TYPE)
-  #define VARGS(x)        (x)
-  #define VALPARM(y)      va_list y
-  #define VALST(z)        (z)
+#define VARGS(x)        (x)
+#define VALPARM(y)      va_list y
+#define VALST(z)        (z)
 #else
-  #define VARGS(x)        (&x)
-  #define VALPARM(y)      const va_list *y
-  #define VALST(z)        (*z)
+#define VARGS(x)        (&x)
+#define VALPARM(y)      const va_list *y
+#define VALST(z)        (*z)
 #endif
 
 /*****************************************************************************/
@@ -126,9 +126,9 @@ enum ptr_mode            { NORMAL_PTR, ALT_PTR };
 
 /** A generic macro to read a character from memory **/
 #if defined(CONFIG_HAVE_ALT_PTR)
-  #define READ_CHAR(m,p)   (((m)==NORMAL_PTR) ? *(const char *)(p) : ROM_CHAR(p))
-  #else
-  #define READ_CHAR(m,p)   (*(const char *)(p))
+#define READ_CHAR(m,p)   (((m)==NORMAL_PTR) ? *(const char *)(p) : ROM_CHAR(p))
+#else
+#define READ_CHAR(m,p)   (*(const char *)(p))
 #endif
 
 /** It is nonsensical to increment a void pointer directly, so we kind-of-cheat
@@ -142,9 +142,9 @@ enum ptr_mode            { NORMAL_PTR, ALT_PTR };
     Wrapper macro around isdigit().
 **/
 #if defined(CONFIG_HAVE_LIBC)
-    #define ISDIGIT(c)      (isdigit((int)c))
+#define ISDIGIT(c)      (isdigit((int)c))
 #else
-    #define ISDIGIT(c)      (('0' <= (c) && (c) <= '9') ? 1 : 0)
+#define ISDIGIT(c)      (('0' <= (c) && (c) <= '9') ? 1 : 0)
 #endif
 
 /*****************************************************************************/
@@ -152,9 +152,9 @@ enum ptr_mode            { NORMAL_PTR, ALT_PTR };
     Wrapper macro around strlen().
 **/
 #if defined(CONFIG_HAVE_LIBC)
-    #define STRLEN(s)       (strlen(s))
+#define STRLEN(s)       (strlen(s))
 #else
-    #define STRLEN(s)       (xx_strlen(s))
+#define STRLEN(s)       (xx_strlen(s))
 #endif
 
 #define STRLEN_ALT(s)       (xx_strlen_alt(s))
@@ -164,9 +164,9 @@ enum ptr_mode            { NORMAL_PTR, ALT_PTR };
     Wrapper macro around strchr().
 **/
 #if defined(CONFIG_HAVE_LIBC)
-    #define STRCHR(s,c)     (strchr((s),(c)))
+#define STRCHR(s,c)     (strchr((s),(c)))
 #else
-    #define STRCHR(s,c)     (xx_strchr((s),(c)))
+#define STRCHR(s,c)     (xx_strchr((s),(c)))
 #endif
 
 /*****************************************************************************/
@@ -222,15 +222,15 @@ static const char zeroes[] = "0000000000000000";
 /*****************************************************************************/
 
 static int do_conv( T_FormatSpec *, VALPARM(), char,
-                    void *(*)(void *, const char *, size_t), void * * );
+                    void *(*)(void *, const char *, size_t), void ** );
 
 static int emit( const char *, size_t,
-                 void * (*)(void *, const char *, size_t ), void * * );
+                 void * (*)(void *, const char *, size_t ), void ** );
 
 static int pad( const char *, size_t,
-                void * (*)(void *, const char *, size_t), void * * );
+                void * (*)(void *, const char *, size_t), void ** );
 
-static int gen_out( void *(*)(void *, const char *, size_t), void * *,
+static int gen_out( void *(*)(void *, const char *, size_t), void **,
                     size_t, const char *, size_t, size_t,
                     const char *, size_t, size_t );
 
@@ -250,13 +250,13 @@ static void * memcpy( void *, const void *, size_t );
 static int do_conv_n( T_FormatSpec *, VALPARM() );
 
 static int do_conv_c( T_FormatSpec *, VALPARM(), char,
-                      void * (*)(void *, const char *, size_t), void * * );
+                      void * (*)(void *, const char *, size_t), void ** );
 
 static int do_conv_s( T_FormatSpec *, VALPARM(), char,
-                      void * (*)(void *, const char *, size_t), void * * );
+                      void * (*)(void *, const char *, size_t), void ** );
 
 static int do_conv_numeric( T_FormatSpec *, VALPARM(), char,
-                            void * (*)(void *, const char *, size_t), void * *,
+                            void * (*)(void *, const char *, size_t), void **,
                             unsigned int );
 
 /*****************************************************************************/
@@ -328,7 +328,7 @@ static char * xx_strchr( const char *s, int c )
     @return 0 if successful, or EXBADFORMAT if failed.
 **/
 static int emit( const char *s, size_t n,
-                 void * (* cons)(void *, const char *, size_t), void * * parg )
+                 void * (* cons)(void *, const char *, size_t), void ** parg )
 {
     if ( ( *parg = ( *cons )( *parg, s, n ) ) == NULL )
         return EXBADFORMAT;
@@ -348,7 +348,7 @@ static int emit( const char *s, size_t n,
     @return 0 if successful, or EXBADFORMAT if failed.
 **/
 static int pad( const char *s, size_t n,
-                void * (* cons)(void *, const char *, size_t), void * * parg )
+                void * (* cons)(void *, const char *, size_t), void ** parg )
 {
     while ( n > 0 )
     {
@@ -376,7 +376,7 @@ static int pad( const char *s, size_t n,
 
     @return Number of emitted characters, or EXBADFORMAT if failure
 **/
-static int gen_out( void *(*cons)(void *, const char *, size_t), void * * parg,
+static int gen_out( void *(*cons)(void *, const char *, size_t), void ** parg,
                     size_t ps1,
                     const char *pfx_s, size_t pfx_n,
                     size_t pz,
@@ -505,7 +505,7 @@ static int do_conv_c( T_FormatSpec * pspec,
                       VALPARM(ap),
                       char           code,
                       void *      (* cons)(void *, const char *, size_t),
-                      void * *       parg )
+                      void **       parg )
 {
     char cc;
     int n = 0;
@@ -549,7 +549,7 @@ static int do_conv_s( T_FormatSpec * pspec,
                       VALPARM(ap),
                       char           code,
                       void *      (* cons)(void *, const char *, size_t),
-                      void * *       parg )
+                      void **       parg )
 {
     size_t length = 0;
     size_t ps1 = 0, ps2 = 0;
@@ -590,7 +590,7 @@ static int do_conv_s_alt( T_FormatSpec * pspec,
                           VALPARM(ap),
                           char           code,
                           void *      (* cons)(void *, const char *, size_t),
-                          void * *       parg )
+                          void **       parg )
 {
     size_t length = 0;
     size_t ps1 = 0, ps2 = 0;
@@ -647,7 +647,7 @@ static int do_conv_numeric( T_FormatSpec * pspec,
                             VALPARM(ap),
                             char           code,
                             void *      (* cons)(void *, const char *, size_t),
-                            void * *       parg,
+                            void **       parg,
                             unsigned int base )
 {
     size_t length = 0;
@@ -782,14 +782,14 @@ static int do_conv_numeric( T_FormatSpec * pspec,
             uv = div_uv;
         }
     }
-     /* Special-case for bases 2, 8 or 16 for the dedicated conversion
-      * specifiers %b, %o and %x/%X.
-      */
+    /* Special-case for bases 2, 8 or 16 for the dedicated conversion
+     * specifiers %b, %o and %x/%X.
+     */
     else if ( base == 2 || base == 8 || base == 16 )
     {
         unsigned int mask  = base - 1;
         unsigned int shift = base == 16 ? 4
-                                        : base == 8 ? 3 : 1;
+                             : base == 8 ? 3 : 1;
 
         for( numWidth = 0; uv; uv >>= shift )
         {
@@ -805,17 +805,17 @@ static int do_conv_numeric( T_FormatSpec * pspec,
     }
     else /* all other bases */
     {
-       for ( numWidth = 0; uv; uv /= base )
-       {
-          char cc = digits[uv % base];
+        for ( numWidth = 0; uv; uv /= base )
+        {
+            char cc = digits[uv % base];
 
-          /* convert to lower case? */
-          if ( code == 'i' || code == 'u' )
-             cc |= 0x20;
+            /* convert to lower case? */
+            if ( code == 'i' || code == 'u' )
+                cc |= 0x20;
 
-          ++numWidth;
-          numBuffer[sizeof(numBuffer) - numWidth] = cc;
-       }
+            ++numWidth;
+            numBuffer[sizeof(numBuffer) - numWidth] = cc;
+        }
     }
 
     if ( pspec->grouping.len )
@@ -855,10 +855,10 @@ static int do_conv_numeric( T_FormatSpec * pspec,
                 else
                 {
                     for ( wid = 0, decade = 1;
-                          glen != 0
-                             && ( grp = READ_CHAR( mode, ptr ) ) != '\0'
-                             && ISDIGIT( grp );
-                          DEC_VOID_PTR(ptr), --glen )
+                            glen != 0
+                            && ( grp = READ_CHAR( mode, ptr ) ) != '\0'
+                            && ISDIGIT( grp );
+                            DEC_VOID_PTR(ptr), --glen )
                     {
                         wid += decade * ( grp - '0' );
                         decade *= 10;
@@ -938,7 +938,7 @@ static int do_conv( T_FormatSpec * pspec,
                     VALPARM(ap),
                     char           code,
                     void *      (* cons)(void *, const char *, size_t),
-                    void * *       parg )
+                    void **       parg )
 {
     unsigned int base = 0;
 
@@ -963,8 +963,8 @@ static int do_conv( T_FormatSpec * pspec,
 
 #if defined(CONFIG_WITH_FP_SUPPORT)
     if ( code == 'e' || code == 'E'
-      || code == 'f' || code == 'F'
-      || code == 'g' || code == 'G' )
+            || code == 'f' || code == 'F'
+            || code == 'g' || code == 'G' )
         return do_conv_fp( pspec, ap, code, cons, parg );
 #endif
 
@@ -997,14 +997,14 @@ static int do_conv( T_FormatSpec * pspec,
         pspec->flags &= ~FHASH;
 
         if ( ( code == 'i' || code == 'I' ) && pspec->base )
-           base = pspec->base;
+            base = pspec->base;
     }
 
     if ( code == 'x' || code == 'X' )
         base = 16;
 
     if ( code == 'u' || code == 'U' )
-       base = pspec->base ? pspec->base : 10;
+        base = pspec->base ? pspec->base : 10;
 
     if ( code == 'o' )
         base = 8;
@@ -1066,15 +1066,15 @@ int format( void *    (* cons) (void *, const char * , size_t),
             /* For normal RAM-based strings we scan over as many input chars
              *  as we can to minimise calls to emit().
              */
-             for ( ; *s && *s != '%'; s++ )
-             ;
+            for ( ; *s && *s != '%'; s++ )
+                ;
 
-             n = s - (const char *)ptr;
+            n = s - (const char *)ptr;
             if ( n > 0 )
             {
                 if ( emit( (const char *)ptr, n, cons, &arg ) < 0 )
                     return EXBADFORMAT;
-               fspec.nChars += n;
+                fspec.nChars += n;
             }
             ptr = (const void *)s;
         }
@@ -1103,14 +1103,15 @@ int format( void *    (* cons) (void *, const char * , size_t),
             int nn;
             static const char fchar[] = {" +-#0!^"};
             static const unsigned int fbit[] = {
-                FSPACE, FPLUS, FMINUS, FHASH, FZERO, FBANG, FCARET, 0};
+                FSPACE, FPLUS, FMINUS, FHASH, FZERO, FBANG, FCARET, 0
+            };
 
             INC_VOID_PTR(ptr);    /* skip the % sign */
 
             /* process conversion flags */
             for ( fspec.flags = 0;
-                  (c = READ_CHAR( mode, ptr )) && (t = STRCHR(fchar, c)) != NULL;
-                  INC_VOID_PTR(ptr) )
+                    (c = READ_CHAR( mode, ptr )) && (t = STRCHR(fchar, c)) != NULL;
+                    INC_VOID_PTR(ptr) )
             {
                 fspec.flags |= fbit[t - fchar];
             }
@@ -1129,8 +1130,8 @@ int format( void *    (* cons) (void *, const char * , size_t),
             else
             {
                 for ( fspec.width = 0;
-                      ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.width < MAXWIDTH;
-                      INC_VOID_PTR(ptr) )
+                        ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.width < MAXWIDTH;
+                        INC_VOID_PTR(ptr) )
                 {
                     fspec.width = fspec.width * 10 + c - '0';
                 }
@@ -1154,8 +1155,8 @@ int format( void *    (* cons) (void *, const char * , size_t),
             else
             {
                 for ( fspec.prec = 0;
-                      ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.prec < MAXPREC;
-                      INC_VOID_PTR(ptr) )
+                        ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.prec < MAXPREC;
+                        INC_VOID_PTR(ptr) )
                 {
                     fspec.prec = fspec.prec * 10 + c - '0';
                 }
@@ -1182,8 +1183,8 @@ int format( void *    (* cons) (void *, const char * , size_t),
             else
             {
                 for ( fspec.base = 0;
-                      ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.base < MAXBASE;
-                      INC_VOID_PTR(ptr) )
+                        ( c = READ_CHAR( mode, ptr ) ) && ISDIGIT( c ) && fspec.base < MAXBASE;
+                        INC_VOID_PTR(ptr) )
                 {
                     fspec.base = fspec.base * 10 + c - '0';
                 }

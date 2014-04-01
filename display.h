@@ -7,7 +7,7 @@
 
 // for lightweight printf
 struct coord {
-   short x, y; 	
+    short x, y;
 };
 
 void sendCommand(uint8_t c);

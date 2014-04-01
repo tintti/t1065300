@@ -11,7 +11,7 @@
 
 #define BUTTON_PORT PORTE
 #define BUTTON_DDR DDRE
-#define BUTTON_PIN PINE 
+#define BUTTON_PIN PINE
 
 #define LEDS_PORT PORTC
 #define LEDS_DDR DDRC
