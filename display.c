@@ -74,7 +74,7 @@ void printString(char* buf, uint8_t row) {
 
    loc.x=0;
    loc.y=row;
-   lcd_printf(loc, buf);
+   lcd_printf(loc, "%3.0", buf);
 
 }
 
@@ -84,7 +84,7 @@ void printInteger(uint16_t d,uint8_t row){
    printString(buf,row);
 }
 
-printIntegerGraphic(uint16_t d)
+void printIntegerGraphic(uint16_t d)
 {
    char buf[10];
    itoa(d, buf, 10);
@@ -98,6 +98,8 @@ void clearScreen(void){
    sendCommand(0x45);
    receiveResponse();
 }
+
+// custom printf implemented with format library
 
 void * lcd_putat(void * ap, const char *s, size_t n)
 {
@@ -130,5 +132,6 @@ int lcd_printf(struct coord loc, const char *fmt, ...)
    va_start(arg, fmt); 
    done = format(lcd_putat, &loc, fmt, arg);
    va_end(arg);
+
    return done;
 }
