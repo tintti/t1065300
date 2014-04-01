@@ -59,29 +59,19 @@ uint8_t receiveResponse(void){
 
 void printString(char* buf, uint8_t row) { 
 
-/*
-   uint8_t data[] = {0x73, 0x00, row, 0x03, 0xff, 0xff};
-   sendMultipleCommands(data, 6);
-   while(*buf){
-      sendCommand(*buf);
-      buf++;
-   }
-
-   sendCommand(0x00);
-   receiveResponse();
-*/
    struct coord loc;
-
    loc.x=0;
    loc.y=row;
-   lcd_printf(loc, "%3.0", buf);
+
+   lcd_printf(loc, buf);
 
 }
 
 void printInteger(uint16_t d,uint8_t row){
-   char buf[10];
-   itoa(d,buf,10);
-   printString(buf,row);
+   struct coord loc;
+   loc.x=0; 
+   loc.y=row;
+   lcd_printf(loc, "%3d", d);
 }
 
 void printIntegerGraphic(uint16_t d)
