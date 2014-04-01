@@ -16,10 +16,6 @@
 
 #define PID_INTERVAL 200 
 // Steering PID
-#define K_P2 0.3
-#define K_I2 0.0
-#define K_D2 0.2
-
 
 volatile uint8_t pidTimer = FALSE;
 
@@ -83,8 +79,6 @@ int main (void)
   setupControls ();
   pid_Init (K_P * SCALING_FACTOR, K_I * SCALING_FACTOR, K_D * SCALING_FACTOR,
 	    &pidDataMotor);
-  pid_Init (K_P2 * SCALING_FACTOR, K_I2 * SCALING_FACTOR,
-	    K_D2 * SCALING_FACTOR, &pidDataSteering);
   _delay_ms(500);
   initDisplay ();
   lcd_printf(0,0,"      Welcome!");
@@ -97,9 +91,7 @@ int main (void)
   PORTK |= 0x01; // Set motor direction to forward.
   sei ();
   uint16_t speed = 4;
-  int16_t referenceValue, measurementValue, inputValue, steeringMeasurement,
-    steeringInput, steeringReference;
- int16_t target;
+  int16_t referenceValue, measurementValue, inputValue;
  uint8_t laps = 0;
  uint8_t onFinishLine = FALSE;
   for (;;)
@@ -112,9 +104,9 @@ int main (void)
           if(inputValue < 0) inputValue=0;
 	  setMotorPWM (inputValue+70);
 
-	 // lcd_printf(0,1,"Wanted RPM:%3d",referenceValue);
-	 //lcd_printf(0,2, "Tacho:%3d", measurementValue); 
-         //lcd_printf(0,3,"PWM:%3d",inputValue);
+         // lcd_printf(0,1,"Wanted RPM:%3d",referenceValue);
+         // lcd_printf(0,2, "Tacho:%3d", measurementValue); 
+         // lcd_printf(0,3,"PWM:%3d",inputValue);
 
 
           pidTimer = FALSE;
@@ -128,7 +120,7 @@ int main (void)
       }
       else {
           if(onFinishLine){
-            //  lcd_printf(0,9,"Laps:%3d",++laps);
+         //     lcd_printf(0,9,"Laps:%3d",++laps);
               onFinishLine = FALSE;
           }
           uint8_t s = sensorFunction();
