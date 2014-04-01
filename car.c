@@ -112,33 +112,11 @@ int main (void)
           if(inputValue < 0) inputValue=0;
 	  setMotorPWM (inputValue+70);
 
-	  lcd_printf(0,1,"Wanted RPM:%3d",referenceValue);
-	  lcd_printf(0,2, "Tacho:%3d", measurementValue); 
-          lcd_printf(0,3,"PWM:%3d",inputValue);
+	 // lcd_printf(0,1,"Wanted RPM:%3d",referenceValue);
+	 //lcd_printf(0,2, "Tacho:%3d", measurementValue); 
+         //lcd_printf(0,3,"PWM:%3d",inputValue);
 
 
-	 // steeringReference = 127;
-	 // steeringMeasurement = sensorFunction () * 32 - 16;
-	 // steeringInput =
-	 //   pid_Controller (steeringReference, steeringMeasurement,
-	 //       	    &pidDataSteering);
-         // if(steeringInput > 128){
-         //    steeringInput = 128;
-         //    pid_Reset_Integrator(&pidDataSteering);
-         // }
-         // else if(steeringInput < -128){
-         //    steeringInput = -128;
-         //    pid_Reset_Integrator(&pidDataSteering);
-         // }
-
-	 // setServo (steeringReference - steeringInput);
-	 // printInteger (steeringReference, 5);
-	 // printInteger (steeringMeasurement, 6);
-	 // printInteger (steeringReference - steeringInput, 7);
-         
-
-
-          lcd_printf(0,9,"Sensors:%3d", sensorArray[0]);
           pidTimer = FALSE;
         }
       if((sensorArray[0] > 10
@@ -150,7 +128,7 @@ int main (void)
       }
       else {
           if(onFinishLine){
-              lcd_printf(0,9,"Laps:%3d",++laps);
+            //  lcd_printf(0,9,"Laps:%3d",++laps);
               onFinishLine = FALSE;
           }
           uint8_t s = sensorFunction();
