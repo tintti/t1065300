@@ -82,12 +82,14 @@ void * lcd_putat(void * ap, const char *s, size_t n)
 {
    struct coord *pc = (struct coord *)ap;
 
+   uint8_t data[]={0x73, pc->x, pc->y, 0x03, 0xff, 0xff};
+   sendMultipleCommands(data, 6);
+
    while (n--)
    {
-      uint8_t data[]={0x54, *s, pc->x, pc->y, 0xff, 0xff};
-      sendMultipleCommands(data, 6);
-      receiveResponse();
-
+//      uint8_t data[]={0x54, *s, pc->x, pc->y, 0xff, 0xff};
+//      sendMultipleCommands(data, 6);;
+      sendCommand(*s);
       pc->x++;
       s++;
 
@@ -97,10 +99,11 @@ void * lcd_putat(void * ap, const char *s, size_t n)
 	 pc->y++;
       }
    }
-
+   
+   sendCommand(0x00);
+   receiveResponse();
    return (void*)pc; 
 }
-
 
 // custom printf to print out stuff nicely 
 int lcd_printf(uint8_t x, uint8_t y, const char *fmt, ...)
