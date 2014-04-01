@@ -58,22 +58,7 @@ uint8_t receiveResponse(void){
    return UDR1;
 }
 
-void printString(char* buf, uint8_t row) { 
 
-   struct coord loc;
-   loc.x=0;
-   loc.y=row;
-
-   lcd_printf(loc, buf);
-
-}
-
-void printInteger(uint16_t d,uint8_t row){
-   struct coord loc;
-   loc.x=0; 
-   loc.y=row;
-   lcd_printf(loc, "%3d", d);
-}
 
 /*
 void printIntegerGraphic(uint16_t d)
@@ -93,7 +78,6 @@ void clearScreen(void){
 }
 
 // consumer for custom display printing implemented with format library
-
 void * lcd_putat(void * ap, const char *s, size_t n)
 {
    struct coord *pc = (struct coord *)ap;
@@ -119,11 +103,11 @@ void * lcd_putat(void * ap, const char *s, size_t n)
 
 
 // custom printf to print out stuff nicely 
-int lcd_printf(struct coord loc, const char *fmt, ...)
+int lcd_printf(uint8_t x, uint8_t y, const char *fmt, ...)
 {
    va_list arg;
    int done;
-
+   struct coord loc = {x,y};
    va_start(arg, fmt); 
    done = format(lcd_putat, &loc, fmt, arg);
    va_end(arg);
