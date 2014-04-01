@@ -28,6 +28,6 @@ void setHighSpeed(void);
 
 void * lcd_putat(void * ap, const char *s, size_t n);
 
-int lcd_printf(struct coord loc, const char *fmt, ...);
+int lcd_printf(uint8_t x, uint8_t y, const char *fmt, ...);
 
 #endif

@@ -26,6 +26,7 @@ volatile uint8_t pidTimer = FALSE;
 pidData_t pidDataMotor;
 pidData_t pidDataSteering;
 volatile uint8_t sensorArray[8];
+uint8_t tempArray[8];
 ISR (TIMER3_COMPA_vect)
 {
   static uint16_t i = 0;
@@ -42,9 +43,22 @@ ISR (TIMER3_COMPA_vect)
   uint8_t s = readSensors ();
   for (uint8_t j = 0; j < 8; j++){
      if (s & (1<<j)){
-        sensorArray[j]++;
+        tempArray[j]++;
      }
   }
+  static uint8_t avg_counter;
+  if(avg_counter != 10){
+      avg_counter++;
+  }
+  else{
+  for (uint8_t j = 0; j < 8; j++){
+      sensorArray[j] = tempArray[j];
+      tempArray[j]=0;
+  }
+      avg_counter = 0;
+  }
+
+
 }
 
 uint8_t
@@ -63,12 +77,6 @@ sensorFunction (void)
     return index;
 }
 
-
-void clearArray(void){
-   for(uint8_t i = 0; i<8;i++){
-      sensorArray[i] = 0;
-   }
-}
 
 int main (void)
 {
@@ -105,8 +113,8 @@ int main (void)
 	  setMotorPWM (inputValue+70);
 	  printInteger (referenceValue, 1);
 	  printInteger (measurementValue, 2);
-	  printInteger (inputValue, 3);
-
+	  //printInteger (inputValue, 3);
+          lcd_printf(0,3,"PWM:%3d",inputValue);
 	 // steeringReference = 127;
 	 // steeringMeasurement = sensorFunction () * 32 - 16;
 	 // steeringInput =
@@ -129,40 +137,35 @@ int main (void)
 
 
           printInteger(sensorArray[0],9);
-	  pidTimer = FALSE;
-	}
-      static uint8_t avg_counter;
-      if(avg_counter != 10){
-          avg_counter++;
-      }
-      else{
-          clearArray();
-          avg_counter = 0;
-      }
-      
+          pidTimer = FALSE;
+        }
       if((sensorArray[0] > 10
-         && sensorArray[1]>10
-         && sensorArray[6]>10
-         && sensorArray[7] > 10)){
-         setServo(127);
-         onFinishLine = TRUE;
+                  && sensorArray[1]>10
+                  && sensorArray[6]>10
+                  && sensorArray[7] > 10)){
+          setServo(127);
+          onFinishLine = TRUE;
       }
       else {
           if(onFinishLine){
-              printInteger(laps++,10);
+              printInteger(++laps,10);
               onFinishLine = FALSE;
           }
+          uint8_t s = sensorFunction();
+          if(s == 1 || s == 8) speed = 1;
+          else if(s == 4 || s == 5) speed = 6;
+          else if((s == 3 || s == 6) && speed  >3) speed = 2;
+          else if(s != 0) speed = 3;
+
+          if(s==1) setServo(0);
+          else if(s==2) setServo(87);
+          else if(s==3) setServo(107);
+          else if(s==4) setServo(117);
+          else if(s==5) setServo(137);
+          else if(s==6) setServo(147);
+          else if(s==7) setServo(167);
+          else if(s==8) setServo(255);
       }
-
-
-      uint8_t s = sensorFunction();
-      if(s == 1 || s == 8) speed = 1;
-      else if(s == 4 || s == 5) speed = 6;
-      else if((s == 3 || s == 6) && speed  >3) speed = 2;
-      else if(s != 0) speed = 3;
-
-      if(s != 0)
-          setServo(s*32 -16);
 
     }
 }
