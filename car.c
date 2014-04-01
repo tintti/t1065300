@@ -145,6 +145,6 @@ main (void)
          setServo(127);
       }
       else setServo(sensorFunction()*32 -16);
-      touchScreen();
+//      touchScreen();
     }
 }

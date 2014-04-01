@@ -1,5 +1,8 @@
 #include "display.h"
 #include <avr/delay.h>
+
+#include "format.h"
+
 void initDisplay()
 {
   //autobaud
@@ -16,10 +19,15 @@ void initDisplay()
   sendCommand(0x05);
   sendCommand(0x00);
   receiveResponse();
+
+  //set font
+  sendCommand(0x46);
+  sendCommand(0x03);
+  receiveResponse();
 }
 
 void setHighSpeed(){
-   setLED1();
+   //setLED1();
    sendCommand(0x51);
    sendCommand(0x0a);
    receiveResponse();
@@ -29,7 +37,7 @@ void setHighSpeed(){
    UCSR1B = (1<<RXEN1) | (1<<TXEN1);
    UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);
    //_delay_ms(100);
-   unSetLED1();
+   // unSetLED1();
 }
 
 void sendCommand(uint8_t data){
@@ -51,9 +59,9 @@ uint8_t receiveResponse(void){
 
 void printString(char* buf, uint8_t row) { 
 
+/*
    uint8_t data[] = {0x73, 0x00, row, 0x03, 0xff, 0xff};
    sendMultipleCommands(data, 6);
-
    while(*buf){
       sendCommand(*buf);
       buf++;
@@ -61,6 +69,12 @@ void printString(char* buf, uint8_t row) {
 
    sendCommand(0x00);
    receiveResponse();
+*/
+   struct coord loc;
+
+   loc.x=0;
+   loc.y=row;
+   lcd_printf(loc, buf);
 
 }
 
@@ -70,23 +84,51 @@ void printInteger(uint16_t d,uint8_t row){
    printString(buf,row);
 }
 
+printIntegerGraphic(uint16_t d)
+{
+   char buf[10];
+   itoa(d, buf, 10);
+
+   uint8_t data[]={0x74, buf, 0x00, 0xbf, 0x00, 0xbf, 0xff, 0xff, 0xff, 0xff};
+   sendMultipleCommands(data, 10);
+   receiveResponse(); 
+}
+
 void clearScreen(void){
    sendCommand(0x45);
    receiveResponse();
 }
 
-void addController(void) {
-//draw text button
+void * lcd_putat(void * ap, const char *s, size_t n)
+{
+   struct coord *pc = (struct coord *)ap;
+
+   while (n--)
+   {
+      uint8_t data[]={0x54, *s, pc->x, pc->y, 0xff, 0xff};
+      sendMultipleCommands(data, 6);
+      receiveResponse();
+
+      pc->x++;
+      s++;
+
+      if (pc->x >= 20)
+      {
+	 pc->x = 0; 
+	 pc->y++;
+      }
+   }
+
+   return (void*)pc; 
 }
 
-void touchScreen(void) {
-   uint8_t data[] = {0x6f, 0x05};
-   sendMultipleCommands(data, 2); 
+int lcd_printf(struct coord loc, const char *fmt, ...)
+{
+   va_list arg;
+   int done;
 
-   receiveResponse();
-   uint8_t x_coordinate = receiveResponse();
-   receiveResponse();
-   receiveResponse();
-   //printString("x coordinate for touch: ", 0); 
-   printInteger(x_coordinate, 0); 
+   va_start(arg, fmt); 
+   done = format(lcd_putat, &loc, fmt, arg);
+   va_end(arg);
+   return done;
 }

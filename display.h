@@ -4,6 +4,12 @@
 #include <avr/io.h>
 #include <stdlib.h>
 
+
+// for lightweight printf
+struct coord {
+   short x, y; 	
+};
+
 void sendCommand(uint8_t c);
 
 void sendMultipleCommands(uint8_t data[], size_t size);
@@ -20,5 +26,8 @@ void initDisplay(void);
 
 void setHighSpeed(void);
 
-void touchScreen(void);
+void * lcd_putat(void * ap, const char *s, size_t n);
+
+int lcd_printf(struct coord loc, const char *fmt, ...);
+
 #endif
