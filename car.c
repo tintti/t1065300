@@ -156,15 +156,18 @@ int main (void)
           else if(s == 4 || s == 5) speed = 6;
           else if((s == 3 || s == 6) && speed  >3) speed = 2;
           else if(s != 0) speed = 3;
-
-          if(s==1) setServo(0);
-          else if(s==2) setServo(87);
-          else if(s==3) setServo(107);
-          else if(s==4) setServo(117);
-          else if(s==5) setServo(137);
-          else if(s==6) setServo(147);
-          else if(s==7) setServo(167);
-          else if(s==8) setServo(255);
+        
+#define S1 8
+#define S2 30
+#define S3 60
+          if(s==1) setServo(20);
+          else if(s==2) setServo(127-S3);
+          else if(s==3) setServo(127-S2);
+          else if(s==4) setServo(127-S1);
+          else if(s==5) setServo(127+S1);
+          else if(s==6) setServo(127+S2);
+          else if(s==7) setServo(127+S3);
+          else if(s==8) setServo(235);
       }
 
     }
