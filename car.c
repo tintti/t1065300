@@ -11,11 +11,10 @@
 
 // Motor PID
 #define K_P 15.00
-#define K_I 6
-#define K_D 4.00
+#define K_I 1.0
+#define K_D 1.0
 
-#define PID_INTERVAL 100
-
+#define PID_INTERVAL 200 
 // Steering PID
 #define K_P2 0.3
 #define K_I2 0.0
@@ -23,7 +22,6 @@
 
 
 volatile uint8_t pidTimer = FALSE;
-volatile uint8_t servoTimer = FALSE;
 
 pidData_t pidDataMotor;
 pidData_t pidDataSteering;
@@ -41,13 +39,6 @@ ISR (TIMER3_COMPA_vect)
       i = 0;
     }
 
-  static uint8_t k =0;
-  if (k < 5) k++;
-  else {
-     servoTimer = TRUE;
-     k = 0;
-  }
-
   uint8_t s = readSensors ();
   for (uint8_t j = 0; j < 8; j++){
      if (s & (1<<j)){
@@ -59,13 +50,17 @@ ISR (TIMER3_COMPA_vect)
 uint8_t
 sensorFunction (void)
 {
-  for (uint8_t i = 0; i < 8; i++)
+    uint8_t largest = 5;
+    uint8_t index = 0;
+    for (uint8_t i = 0; i < 8; i++)
     {
-      if (sensorArray[i] > 10)
-	{
-	  return i + 1;
+        if (sensorArray[i] > largest)
+        {
+            largest = sensorArray[i];
+            index = i+1;
 	}
     }
+    return index;
 }
 
 
@@ -94,7 +89,7 @@ main (void)
   // Main code here
   PORTK |= 0x01; // Set motor direction to forward.
   sei ();
-  uint16_t speed = 1;
+  uint16_t speed = 4;
   int16_t referenceValue, measurementValue, inputValue, steeringMeasurement,
     steeringInput, steeringReference;
  int16_t target;
@@ -104,10 +99,9 @@ main (void)
 	{
 	  referenceValue = speed;
 	  measurementValue = readTacho ();
-	  inputValue =
-	    pid_Controller (referenceValue, measurementValue, &pidDataMotor);
+	  inputValue = pid_Controller (referenceValue, measurementValue, &pidDataMotor);
           if(inputValue < 0) inputValue=0;
-	  setMotorPWM (inputValue);
+	  setMotorPWM (inputValue+70);
 	  printInteger (referenceValue, 1);
 	  printInteger (measurementValue, 2);
 	  printInteger (inputValue, 3);
@@ -134,9 +128,16 @@ main (void)
 
 
           printInteger(sensorArray[0],9);
-          clearArray();
 	  pidTimer = FALSE;
 	}
+      static uint8_t avg_counter;
+      if(avg_counter != 10){
+          avg_counter++;
+      }
+      else{
+          clearArray();
+          avg_counter = 0;
+      }
       
       if((sensorArray[0] > 10
          && sensorArray[1]>10
@@ -144,7 +145,17 @@ main (void)
          && sensorArray[7] > 10)){
          setServo(127);
       }
-      else setServo(sensorFunction()*32 -16);
+      else{
+          uint8_t s = sensorFunction();
+          if(s == 1 || s == 8) speed = 1;
+          else if(s == 4 || s == 5) speed = 6;
+          else if((s == 3 || s == 6) && speed  >3) speed = 2;
+          else if(s != 0) speed = 3;
+
+          if(s != 0)
+          setServo(s*32 -16);
+
+      }
       touchScreen();
     }
 }
