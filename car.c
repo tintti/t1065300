@@ -70,8 +70,7 @@ void clearArray(void){
    }
 }
 
-int
-main (void)
+int main (void)
 {
   setupControls ();
   pid_Init (K_P * SCALING_FACTOR, K_I * SCALING_FACTOR, K_D * SCALING_FACTOR,
@@ -93,6 +92,8 @@ main (void)
   int16_t referenceValue, measurementValue, inputValue, steeringMeasurement,
     steeringInput, steeringReference;
  int16_t target;
+ uint8_t laps = 0;
+ uint8_t onFinishLine = FALSE;
   for (;;)
     {
       if (pidTimer)
@@ -144,18 +145,24 @@ main (void)
          && sensorArray[6]>10
          && sensorArray[7] > 10)){
          setServo(127);
+         onFinishLine = TRUE;
+      }
+      else {
+          if(onFinishLine){
+              printInteger(laps++,10);
+              onFinishLine = FALSE;
+          }
       }
 
-      else{
-          uint8_t s = sensorFunction();
-          if(s == 1 || s == 8) speed = 1;
-          else if(s == 4 || s == 5) speed = 6;
-          else if((s == 3 || s == 6) && speed  >3) speed = 2;
-          else if(s != 0) speed = 3;
 
-          if(s != 0)
+      uint8_t s = sensorFunction();
+      if(s == 1 || s == 8) speed = 1;
+      else if(s == 4 || s == 5) speed = 6;
+      else if((s == 3 || s == 6) && speed  >3) speed = 2;
+      else if(s != 0) speed = 3;
+
+      if(s != 0)
           setServo(s*32 -16);
 
-      }
     }
 }
