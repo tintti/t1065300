@@ -70,8 +70,7 @@ void clearArray(void){
    }
 }
 
-int
-main (void)
+int main (void)
 {
   setupControls ();
   pid_Init (K_P * SCALING_FACTOR, K_I * SCALING_FACTOR, K_D * SCALING_FACTOR,
@@ -93,6 +92,7 @@ main (void)
   int16_t referenceValue, measurementValue, inputValue, steeringMeasurement,
     steeringInput, steeringReference;
  int16_t target;
+ uint8_t laps = 0;
   for (;;)
     {
       if (pidTimer)
@@ -144,6 +144,7 @@ main (void)
          && sensorArray[6]>10
          && sensorArray[7] > 10)){
          setServo(127);
+         printInteger(laps++,10);
       }
 
       else{
